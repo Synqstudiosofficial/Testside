@@ -59,6 +59,8 @@ const stories=[
   {c:"Kultur",t:"Dansk film står stærkt på septembers internationale festivaler",d:"Nye danske produktioner rejser ud til et tæt efterårsprogram af filmfestivaler.",time:"09:35",src:"Det Danske Filminstitut",url:"https://www.dfi.dk/nyheder",body:["September er en vigtig måned for dansk film internationalt. Flere produktioner vises på store festivaler, hvor de møder distributører, presse og publikum.","Festivaldeltagelse kan få stor betydning for filmenes videre liv og mulighed for international distribution."]}
 ];
 
+if(Array.isArray(window.latestStories)) stories.unshift(...window.latestStories);
+
 stories.forEach((s,i)=>{s.id=i;s.image=categoryImages[s.c]});
 const cats=["Alle","Danmark","Verden","Politik","Erhverv","Sport","Tech","Gaming","Kultur"];
 let selected="Alle",query="";
@@ -67,8 +69,8 @@ const nav=$("#nav"),grid=$("#grid");
 
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function image(s,article=false){return `<img src="${s.image.url}" alt="" loading="${article?"eager":"lazy"}"><span class="credit">Foto: <a href="${s.image.creditUrl}" target="_blank" rel="noopener">${esc(s.image.credit)}</a></span>`}
-function storyUrl(id){return `article.html?id=${id}&v=20260901-2`}
-function categoryUrl(category){return category==="Alle"?"index.html?v=20260901-4":`index.html?category=${encodeURIComponent(category)}&v=20260901-4`}
+function storyUrl(id){return `article.html?id=${id}&v=20260901-5`}
+function categoryUrl(category){return category==="Alle"?"index.html?v=20260901-5":`index.html?category=${encodeURIComponent(category)}&v=20260901-5`}
 function goStory(id){window.location.href=storyUrl(id)}
 function card(s){return `<article class="card" data-id="${s.id}" tabindex="0" role="link" aria-label="Læs: ${esc(s.t)}"><div class="thumb">${image(s)}<span class="tag">${s.c}</span></div><div class="body"><div class="meta"><span>${s.time}</span><span>3 min.</span></div><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><span class="source">Kilde: ${esc(s.src)} ↗</span></div></article>`}
 function render(){
@@ -81,7 +83,7 @@ function setup(){
   if(cats.includes(requested))selected=requested;
   if(selected!=="Alle"){document.body.classList.add("category-view");document.title=`${selected} — Fokus`}
   nav.innerHTML=cats.map(c=>`<a href="${categoryUrl(c)}" data-cat="${c}">${c}</a>`).join("");
-  const featured=[stories[5],stories[0],stories[15],stories[20],stories[25],stories[30],stories[35]];
+  const featured=["Danmark","Verden","Politik","Erhverv","Sport","Tech","Gaming","Kultur"].map(c=>stories.find(s=>s.c===c)).filter(Boolean);
   let slide=0,timer;
   function showSlide(next,animate=true){
     slide=(next+featured.length)%featured.length;
