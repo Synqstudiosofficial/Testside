@@ -1,3 +1,4 @@
+(function(){
 const {stories,esc,image,storyUrl}=window.FokusData;
 const root=document.querySelector("#articleRoot");
 const id=Number(new URLSearchParams(location.search).get("id"));
@@ -15,3 +16,4 @@ if(!story){
 }
 
 addEventListener("scroll",()=>{const max=document.documentElement.scrollHeight-innerHeight;document.querySelector("#progress").style.width=`${max>0?scrollY/max*100:0}%`},{passive:true});
+})();
