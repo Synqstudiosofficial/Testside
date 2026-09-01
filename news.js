@@ -63,16 +63,13 @@ stories.forEach((s,i)=>{s.id=i;s.image=categoryImages[s.c]});
 const cats=["Alle","Danmark","Verden","Politik","Erhverv","Sport","Tech","Gaming","Kultur"];
 let selected="Alle",query="";
 const $=s=>document.querySelector(s);
-const nav=$("#nav"),grid=$("#grid"),dialog=$("#dialog");
+const nav=$("#nav"),grid=$("#grid");
 
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function image(s,article=false){return `<img src="${s.image.url}" alt="" loading="${article?"eager":"lazy"}"><span class="credit">Foto: <a href="${s.image.creditUrl}" target="_blank" rel="noopener">${esc(s.image.credit)}</a></span>`}
-function openStory(id){
-  const s=stories.find(x=>x.id===id);
-  $("#articleView").innerHTML=`<div class="articleimg">${image(s,true)}</div><article class="article"><span class="tag">${s.c}</span><h1>${esc(s.t)}</h1><p class="dek">${esc(s.d)}</p><div class="meta"><span>1. september 2026 · ${s.time}</span><span>Af Fokus-redaktionen</span></div><div class="articletext">${s.body.map(p=>`<p>${esc(p)}</p>`).join("")}</div><div class="sourcebox"><b>Kilde:</b> Denne artikel er et selvstændigt resumé baseret på <a href="${s.url}" target="_blank" rel="noopener">${esc(s.src)}</a>. Følg linket for originalkilden og eventuelle senere opdateringer.</div></article>`;
-  dialog.showModal();document.body.style.overflow="hidden";
-}
-function card(s){return `<article class="card" data-id="${s.id}" tabindex="0"><div class="thumb">${image(s)}<span class="tag">${s.c}</span></div><div class="body"><div class="meta"><span>${s.time}</span><span>3 min.</span></div><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><span class="source">Kilde: ${esc(s.src)} ↗</span></div></article>`}
+function storyUrl(id){return `article.html?id=${id}`}
+function goStory(id){window.location.href=storyUrl(id)}
+function card(s){return `<article class="card" data-id="${s.id}" tabindex="0" role="link" aria-label="Læs: ${esc(s.t)}"><div class="thumb">${image(s)}<span class="tag">${s.c}</span></div><div class="body"><div class="meta"><span>${s.time}</span><span>3 min.</span></div><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><span class="source">Kilde: ${esc(s.src)} ↗</span></div></article>`}
 function render(){
   const list=stories.filter(s=>(selected==="Alle"||s.c===selected)&&(!query||(s.t+" "+s.d+" "+s.c).toLowerCase().includes(query)));
   grid.innerHTML=list.map(card).join("");$("#empty").classList.toggle("show",!list.length);$("#count").textContent=`${list.length} historier`;$("#sectionTitle").textContent=selected==="Alle"?(query?"Søgeresultater":"Alle nyheder"):selected;
@@ -80,20 +77,34 @@ function render(){
 }
 function setup(){
   nav.innerHTML=cats.map(c=>`<button data-cat="${c}">${c}</button>`).join("");
-  const lead=stories[5];$("#lead").innerHTML=`${image(lead,true)}<div class="leadcopy"><span class="tag">${lead.c}</span><h1>${esc(lead.t)}</h1><p>${esc(lead.d)}</p></div>`;$("#lead").onclick=()=>openStory(lead.id);
-  $("#latest").innerHTML=stories.slice(0,5).map(s=>`<a href="#" data-id="${s.id}"><time>${s.time}</time><h3>${esc(s.t)}</h3></a>`).join("");
+  const featured=[stories[5],stories[0],stories[15],stories[20],stories[25],stories[30],stories[35]];
+  let slide=0,timer;
+  function showSlide(next,animate=true){
+    slide=(next+featured.length)%featured.length;
+    const lead=featured[slide],el=$("#lead");
+    if(animate)el.classList.add("changing");
+    setTimeout(()=>{
+      el.innerHTML=`${image(lead,true)}<span class="slidecount">${String(slide+1).padStart(2,"0")} / ${String(featured.length).padStart(2,"0")}</span><div class="leadcopy"><span class="tag">${lead.c}</span><h1>${esc(lead.t)}</h1><p>${esc(lead.d)}</p></div><div class="slider-dots" aria-label="Vælg fremhævet nyhed">${featured.map((_,i)=>`<button class="slider-dot ${i===slide?"active":""}" data-slide="${i}" aria-label="Nyhed ${i+1}"></button>`).join("")}</div><div class="slider-nav"><button class="slider-arrow" data-dir="-1" aria-label="Forrige nyhed">‹</button><button class="slider-arrow" data-dir="1" aria-label="Næste nyhed">›</button></div>`;
+      el.dataset.id=lead.id;el.classList.remove("changing");
+    },animate?180:0);
+  }
+  function auto(){clearInterval(timer);if(!matchMedia("(prefers-reduced-motion: reduce)").matches)timer=setInterval(()=>showSlide(slide+1),6000)}
+  showSlide(0,false);auto();
+  $("#lead").onclick=e=>{const dot=e.target.closest("[data-slide]"),arrow=e.target.closest("[data-dir]");if(dot){e.stopPropagation();showSlide(+dot.dataset.slide);auto()}else if(arrow){e.stopPropagation();showSlide(slide+(+arrow.dataset.dir));auto()}else if(!e.target.closest(".credit"))goStory(+e.currentTarget.dataset.id)};
+  $("#lead").onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&!e.target.matches("button,a")){e.preventDefault();goStory(+e.currentTarget.dataset.id)}};
+  $("#lead").onmouseenter=()=>clearInterval(timer);$("#lead").onmouseleave=auto;
+  $("#latest").innerHTML=stories.slice(0,5).map(s=>`<a href="${storyUrl(s.id)}"><time>${s.time}</time><h3>${esc(s.t)}</h3></a>`).join("");
   $("#ticker").textContent=stories[0].t;
   nav.onclick=e=>{if(e.target.dataset.cat){selected=e.target.dataset.cat;query="";$("#searchInput").value="";render();window.scrollTo({top:430,behavior:"smooth"})}};
-  grid.onclick=e=>{const c=e.target.closest(".card");if(c)openStory(+c.dataset.id)};
-  grid.onkeydown=e=>{const c=e.target.closest(".card");if(c&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openStory(+c.dataset.id)}};
-  $("#latest").onclick=e=>{const a=e.target.closest("[data-id]");if(a){e.preventDefault();openStory(+a.dataset.id)}};
+  grid.onclick=e=>{const c=e.target.closest(".card");if(c)goStory(+c.dataset.id)};
+  grid.onkeydown=e=>{const c=e.target.closest(".card");if(c&&(e.key==="Enter"||e.key===" ")){e.preventDefault();goStory(+c.dataset.id)}};
   $("#searchBtn").onclick=()=>{$("#search").classList.add("open");setTimeout(()=>$("#searchInput").focus(),30)};
   $("#menuBtn").onclick=()=>document.querySelector(".nav").scrollIntoView({behavior:"smooth"});
   $("#closeSearch").onclick=()=>$("#search").classList.remove("open");
   $("#searchInput").oninput=e=>{query=e.target.value.trim().toLowerCase();selected="Alle";render()};
   $("#searchInput").onkeydown=e=>{if(e.key==="Enter")$("#search").classList.remove("open")};
-  $("#dialogClose").onclick=()=>dialog.close();dialog.onclose=()=>document.body.style.overflow="";
-  dialog.onclick=e=>{if(e.target===dialog)dialog.close()};
+  const requested=new URLSearchParams(location.search).get("category");if(cats.includes(requested))selected=requested;
   render();
 }
-setup();
+window.FokusData={stories,cats,esc,image,storyUrl};
+if(document.querySelector("#nav"))setup();
