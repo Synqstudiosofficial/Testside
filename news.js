@@ -67,7 +67,7 @@ const nav=$("#nav"),grid=$("#grid");
 
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
 function image(s,article=false){return `<img src="${s.image.url}" alt="" loading="${article?"eager":"lazy"}"><span class="credit">Foto: <a href="${s.image.creditUrl}" target="_blank" rel="noopener">${esc(s.image.credit)}</a></span>`}
-function storyUrl(id){return `article.html?id=${id}`}
+function storyUrl(id){return `article.html?id=${id}&v=20260901-2`}
 function goStory(id){window.location.href=storyUrl(id)}
 function card(s){return `<article class="card" data-id="${s.id}" tabindex="0" role="link" aria-label="Læs: ${esc(s.t)}"><div class="thumb">${image(s)}<span class="tag">${s.c}</span></div><div class="body"><div class="meta"><span>${s.time}</span><span>3 min.</span></div><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><span class="source">Kilde: ${esc(s.src)} ↗</span></div></article>`}
 function render(){
