@@ -56,7 +56,7 @@
 <div class="overlay ad" id="ad"><div class="ad-label">Annonce · prototype</div><div class="orb">SYN<span style="color:var(--red)">Q</span></div><h2>Annonceplads</h2><p>Her vises en rigtig reklame senere.</p><div class="ad-count" id="adCount"></div><button class="ad-close" id="adClose">Fortsæt</button></div>
 <script>
 (() => {
-  const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''), targets=['S','Y','N','Q'], speeds=[160,145,130,115], $=id=>document.getElementById(id);
+  const alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''), targets=['S','Y','N','Q'], speeds=[220,190,165,140], $=id=>document.getElementById(id);
   const views=[...document.querySelectorAll('.view')], state={stage:0,index:0,reel:null,locked:false,running:false,start:0,frame:null,last:null,returnView:'homeView',afterAd:null};
   const dateKey=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Copenhagen',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const displayDate=new Intl.DateTimeFormat('da-DK',{timeZone:'Europe/Copenhagen',weekday:'long',day:'numeric',month:'long'}).format(new Date());
