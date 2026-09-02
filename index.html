@@ -14,7 +14,7 @@
     button,input{font:inherit}button{color:inherit}.app{min-height:100svh;display:flex;flex-direction:column;position:relative;isolation:isolate;overflow:hidden}
     .app:before{content:"";position:fixed;z-index:-2;inset:-25%;background:radial-gradient(circle at 50% 15%,rgba(255,45,69,.13),transparent 27%),radial-gradient(circle at 50% 100%,rgba(255,45,69,.06),transparent 34%)}
     .noise{position:fixed;z-index:-1;inset:0;opacity:.035;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E")}
-    .topbar{height:calc(74px + var(--top));padding:var(--top) 14px 0;display:grid;grid-template-columns:92px 1fr auto;align-items:center;position:relative;z-index:5}.top-actions{display:flex;justify-content:flex-end;gap:6px}.top-actions .icon{padding:0 11px;font-size:12px}.top-actions .hidden{display:none}
+    .topbar{height:calc(74px + var(--top));padding:var(--top) 14px 0;display:grid;grid-template-columns:92px minmax(0,1fr) 92px;align-items:center;position:relative;z-index:5}.top-actions{width:92px;display:flex;justify-content:flex-end;gap:6px}.top-actions .icon{padding:0 10px;font-size:11px}.top-actions .hidden{display:none}
     .brand{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;white-space:nowrap;line-height:1}.brand-main{display:flex;align-items:center;gap:7px}.brand-main b{font-size:14px;font-weight:900;letter-spacing:.13em}.brand-main b span{color:var(--red)}.brand-main small{position:relative;font-size:9px;font-weight:800;letter-spacing:.16em;color:#fff}.brand-main small:after{content:"";position:absolute;z-index:2;left:-3px;right:-3px;top:48%;height:1.5px;border-radius:99px;background:var(--red);transform:rotate(-9deg);box-shadow:0 0 7px rgba(255,45,69,.45)}.brand-section{font-style:normal;font-size:8px;font-weight:850;letter-spacing:.42em;color:var(--red);padding-left:.42em;margin-top:5px}
     .icon{border:1px solid var(--line);background:rgba(17,17,19,.72);backdrop-filter:blur(12px);height:42px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:750;cursor:pointer}.icon:active,.primary:active{transform:scale(.96)}.icon.hidden{visibility:hidden}.right{justify-self:end}
     .view{display:none;flex:1;min-height:0}.view.active{display:flex;animation:fade .32s ease both}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
@@ -93,6 +93,6 @@
   document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.running)beginMaster()});if(!localStorage.getItem('synq-ad-gap'))resetAdCycle();update();progress();
 })();
 </script>
-<script src="game.js"></script>
+<script src="game.js?v=20260902-3"></script>
 </body>
 </html>
